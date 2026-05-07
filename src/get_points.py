@@ -11,7 +11,7 @@ def on_mouse_click(event, x, y, flags, param):
         cv2.imshow("Select 4 field corners", frame)
         print(f"Point {len(selected_points)}: ({x}, {y})")
 
-video_capture = cv2.VideoCapture("Untitled design.mp4")
+video_capture = cv2.VideoCapture("../videos/Untitled design.mp4")
 ret, frame = video_capture.read()
 video_capture.release()
 

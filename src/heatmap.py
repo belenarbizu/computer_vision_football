@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
 import os
 
-model = YOLO("yolov8_football.pt")
+model = YOLO("../models/yolov8_football.pt")
 tracker = sv.ByteTrack()
 
 src_points = np.array([[636, 215], [1310, 271], [365, 284], [589, 307]], dtype=np.float32)
@@ -20,7 +20,7 @@ dst_points = np.array([
 
 H, _ = cv2.findHomography(src_points, dst_points, cv2.RANSAC, 5.0)
 
-video_capture = cv2.VideoCapture("Untitled design.mp4")
+video_capture = cv2.VideoCapture("../videos/Untitled design.mp4")
 frames_per_second = video_capture.get(cv2.CAP_PROP_FPS) or 25
 player_history = defaultdict(list)
 
