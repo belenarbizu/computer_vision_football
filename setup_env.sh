@@ -1,40 +1,40 @@
 #!/bin/bash
 
-# Nombre del entorno virtual
+# Virtual environment name
 VENV_NAME="venv"
 
-echo "Iniciando configuración del entorno para el proyecto de Computer Vision..."
+echo "Starting environment configuration for the Computer Vision project..."
 
-# 1. Crear el entorno virtual
-echo "Creando entorno virtual en './$VENV_NAME'..."
+# 1. Create the virtual environment
+echo "Creating virtual environment in './$VENV_NAME'..."
 python -m venv $VENV_NAME
 
 if [ $? -eq 0 ]; then
-    echo "✅ Entorno virtual creado con éxito."
+    echo "✅ Virtual environment created successfully."
     
-    # 2. Determinar el script de activación (Windows vs Linux/macOS)
+    # 2. Determine the activation script (Windows vs Linux/macOS)
     if [ -d "$VENV_NAME/Scripts" ]; then
         ACTIVATE_PATH="$VENV_NAME/Scripts/activate"
     else
         ACTIVATE_PATH="$VENV_NAME/bin/activate"
     fi
 
-    # 3. Activar el entorno e instalar dependencias
-    echo "Activando el entorno..."
+    # 3. Activate the environment and install dependencies
+    echo "Activating the environment..."
     source "$ACTIVATE_PATH"
 
-    echo "Actualizando pip e instalando dependencias desde requirements.txt..."
+    echo "Updating pip and installing dependencies from requirements.txt..."
     pip install --upgrade pip
     pip install -r requirements.txt
 
     if [ $? -eq 0 ]; then
-        echo "✅ Instalación completada correctamente."
-        echo "Para usar el entorno, ejecuta: source $ACTIVATE_PATH"
+        echo "✅ Installation completed successfully."
+        echo "To use the environment, run: source $ACTIVATE_PATH"
     else
-        echo "❌ Error al instalar las dependencias."
+        echo "❌ Error installing dependencies."
         exit 1
     fi
 else
-    echo "❌ Error al crear el entorno virtual. Asegúrate de tener Python instalado y accesible."
+    echo "❌ Error creating the virtual environment. Ensure Python is installed and accessible."
     exit 1
 fi
