@@ -6,7 +6,7 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
 from sklearn.cluster import KMeans
-from src.reidentifier import PlayerReidentifier
+from reidentifier import PlayerReidentifier
 import os
 
 VIDEO = "../videos/Untitled design.mp4"
@@ -175,13 +175,13 @@ for team, players in teams.items():
 # ── Heatmaps ──────────────────────────────────────────────
 
 print("\nGenerating heatmaps...")
-os.makedirs("heatmaps", exist_ok=True)
+os.makedirs("../outputs", exist_ok=True)
 
 for tid, positions in history.items():
     if len(positions) < 20:
         continue
     generate_heatmap(f"Player #{tid}", positions,
-                    f"heatmaps/player_{tid:03d}.png")
+                    f"../outputs/player_{tid:03d}.png")
 
 team_cmaps = {0: "Reds", 1: "Blues"}
 for team, players in teams.items():
@@ -189,13 +189,13 @@ for team, players in teams.items():
     if len(positions) < 20:
         continue
     generate_heatmap(f"Team {team}", positions,
-                    f"heatmaps/team_{team}.png",
+                    f"../outputs/team_{team}.png",
                     cmap=team_cmaps[team])
-    print(f"  team {team} → heatmaps/team_{team}.png")
+    print(f"  team {team} → outputs/team_{team}.png")
 
 all_positions = [p for positions in history.values() for p in positions]
-generate_heatmap("Global", all_positions, "heatmaps/global.png")
-print("  global → heatmaps/global.png")
+generate_heatmap("Global", all_positions, "../outputs/global.png")
+print("  global → outputs/global.png")
 
 # ── Segunda pasada: vídeo anotado ────────────────────────
 
@@ -211,7 +211,7 @@ cap2     = cv2.VideoCapture(VIDEO)
 width = int(cap2.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap2.get(cv2.CAP_PROP_FRAME_HEIGHT))
 writer = cv2.VideoWriter(
-    "team_outputs.mp4",
+    "../outputs/team_outputs.mp4",
     cv2.VideoWriter_fourcc(*"mp4v"),
     fps, (width, height)
 )
@@ -248,5 +248,5 @@ writer.release()
 cv2.destroyAllWindows()
 
 print("\nReady:")
-print("  - heatmaps/          → heatmaps by player and team")
-print("  - team_outputs.mp4 → annotated video with teams and re-id")
+print("  - outputs/                 → heatmaps by player and team")
+print("  - outputs/team_outputs.mp4 → annotated video with teams and re-id")

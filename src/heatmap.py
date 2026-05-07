@@ -91,15 +91,15 @@ def generate_global_heatmap(player_history, output_path):
     generate_heatmap("all", all_positions, output_path)
 
 # ── Generate Heatmaps ──────────────────────────────────────
-os.makedirs("heatmaps", exist_ok=True)
+os.makedirs("../outputs", exist_ok=True)
 
 print("\nGenerating heatmaps...")
 for tid, positions in player_history.items():
     if len(positions) < 20:
         continue
-    generate_heatmap(tid, positions, f"heatmaps/player_{tid:03d}.png")
-    print(f"  player #{tid} → heatmaps/player_{tid:03d}.png")
+    generate_heatmap(tid, positions, f"../outputs/player_{tid:03d}.png")
+    print(f"  player #{tid} → outputs/player_{tid:03d}.png")
 
-generate_global_heatmap(player_history, "heatmaps/global.png")
-print("  global → heatmaps/global.png")
+generate_global_heatmap(player_history, "../outputs/global.png")
+print("  global → outputs/global.png")
 print("Done")
