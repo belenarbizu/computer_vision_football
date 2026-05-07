@@ -1,5 +1,5 @@
 venv/
 setup.py
-output_teams.mp4
-Untitled design.mp4
-heatmaps/
+outputs/
+__pycache__/
+videos/
