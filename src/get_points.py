@@ -1,5 +1,16 @@
 import cv2
-import numpy as np
+import argparse
+import os
+
+parser = argparse.ArgumentParser(description="Select reference points for homography.")
+parser.add_argument("--video", type=str, default="../videos/Untitled design.mp4", help="Video path.")
+args = parser.parse_args()
+
+video_path = args.video
+
+if not os.path.exists(video_path):
+    print(f"Error: File '{video_path}' does not exist.")
+    exit()
 
 selected_points = []
 def on_mouse_click(event, x, y, flags, param):
@@ -11,13 +22,12 @@ def on_mouse_click(event, x, y, flags, param):
         cv2.imshow("Select 4 field corners", frame)
         print(f"Point {len(selected_points)}: ({x}, {y})")
 
-video_capture = cv2.VideoCapture("../videos/Untitled design.mp4")
+video_capture = cv2.VideoCapture(video_path)
 ret, frame = video_capture.read()
 video_capture.release()
 
 if not ret or frame is None:
-    print("Error: Could not read the video file 'Untitled design.mp4'.")
-    print("Please check if the file exists in the folder and the name is correct.")
+    print(f"Error: The frame video could not be read from '{video_path}'.")
     exit()
 
 cv2.namedWindow("Select 4 field corners", cv2.WINDOW_FULLSCREEN)
