@@ -90,6 +90,7 @@ def generate_heatmap(title, positions, output_path, cmap="hot"):
     plt.savefig(output_path, dpi=100, bbox_inches="tight")
     plt.close()
 
+
 # ── First pass ────────────────────────────────────────
 
 print("First pass — collecting data...")
@@ -113,7 +114,7 @@ while cap.isOpened():
     if not ret:
         break
 
-    results    = model(frame, conf=0.3)[0]
+    results    = model(frame, conf=0.5113)[0]
     detections = sv.Detections.from_ultralytics(results)
     detections = detections[np.isin(detections.class_id, [1, 2])]
     detections = tracker.update_with_detections(detections)
