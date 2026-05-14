@@ -3,3 +3,5 @@ setup.py
 outputs/
 __pycache__/
 videos/
+newplot.png
+points.json

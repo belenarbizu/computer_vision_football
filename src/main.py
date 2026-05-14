@@ -95,8 +95,8 @@ def generate_heatmap(title, positions, output_path, cmap="hot"):
 print("First pass — collecting data...")
 tracker = sv.ByteTrack(
     lost_track_buffer=21,
-    track_activation_thresold=0.3659,
-    minimum_matching_thresold=0.8609
+    track_activation_threshold=0.3659,
+    minimum_matching_threshold=0.8609
 )
 history           = defaultdict(list)
 player_colors     = defaultdict(list)
@@ -225,8 +225,8 @@ TEAM_COLOR = {
 
 tracker2 = sv.ByteTrack(
     lost_track_buffer=21,
-    track_activation_thresold=0.3659,
-    minimum_matching_thresold=0.8609
+    track_activation_threshold=0.3659,
+    minimum_matching_threshold=0.8609
 )
 cap2     = cv2.VideoCapture(VIDEO)
 width = int(cap2.get(cv2.CAP_PROP_FRAME_WIDTH))

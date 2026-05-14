@@ -92,14 +92,12 @@ Click on 4 points on the pitch lines for which you know the coordinates in meter
 
 ```python
 # Edit theses variables in main.py
-VIDEO = "your_video.mp4"
-
 src_points = np.array([...])  # pixels of the video
 dst_points = np.array([...])  # reals coordinates in meters
 ```
 
 ```bash
-python main.py
+python main.py --video your_video.mp4
 ```
 
 ### 3. Generated outputs
