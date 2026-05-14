@@ -6,21 +6,39 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
 import os
+import argparse
+import json
 
 model = YOLO("../models/yolov8_football.pt")
 tracker = sv.ByteTrack()
 
-src_points = np.array([[636, 215], [1310, 271], [365, 284], [589, 307]], dtype=np.float32)
-dst_points = np.array([
-    [0,    13.8],
-    [16.5, 13.8],
-    [0,   24.84],
-    [10.5,24.84],
-], dtype=np.float32)
+# ── Argument Parsing ──────────────────────────────────────
+parser = argparse.ArgumentParser(description="Generate player heatmaps from a video.")
+parser.add_argument("--video", type=str, default="../videos/Untitled design.mp4", help="Path to the video file.")
+args = parser.parse_args()
+
+video_path = args.video
+if not os.path.exists(video_path):
+    print(f"Error: The video file '{video_path}' does not exist.")
+    exit()
+
+# ── Load Homography Points ────────────────────────────────
+try:
+    with open("points.json", "r") as f:
+        points_data = json.load(f)
+    src_points = np.array(points_data["src_points"], dtype=np.float32)
+    dst_points = np.array(points_data["dst_points"], dtype=np.float32)
+except FileNotFoundError:
+    print("Error: 'points.json' not found. Please run 'get_points.py' first.")
+    exit()
 
 H, _ = cv2.findHomography(src_points, dst_points, cv2.RANSAC, 5.0)
 
-video_capture = cv2.VideoCapture("../videos/Untitled design.mp4")
+video_capture = cv2.VideoCapture(video_path)
+if not video_capture.isOpened():
+    print(f"Error: Could not open the video file '{video_path}'.")
+    exit()
+
 frames_per_second = video_capture.get(cv2.CAP_PROP_FPS) or 25
 player_history = defaultdict(list)
 

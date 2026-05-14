@@ -1,6 +1,7 @@
 import cv2
 import argparse
 import os
+import json
 
 parser = argparse.ArgumentParser(description="Select reference points for homography.")
 parser.add_argument("--video", type=str, default="../videos/Untitled design.mp4", help="Video path.")
@@ -37,3 +38,14 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 print("Your points:", selected_points)
+
+# ── Save points to file ──────────────────────────────────
+data = {
+    "src_points": selected_points,
+    "dst_points": [[0, 0] for _ in range(len(selected_points))]
+}
+with open("points.json", "w") as f:
+    json.dump(data, f, indent=4)
+
+print("\n[INFO] Points saved to 'points.json'.")
+print("REMINDER: Please update the 'dst_points' in 'points.json' with the real-world coordinates (in meters).")
