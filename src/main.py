@@ -8,19 +8,32 @@ from scipy.ndimage import gaussian_filter
 from sklearn.cluster import KMeans
 from reidentifier import PlayerReidentifier
 import os
+import json
+import argparse
 
-VIDEO = "../videos/Untitled design.mp4"
+# ── Argument Parsing ──────────────────────────────────────
+parser = argparse.ArgumentParser(description="Football Tactical Analysis Pipeline")
+parser.add_argument("--video", type=str, default="../videos/Untitled design.mp4", help="Path to the video file.")
+args = parser.parse_args()
+
+VIDEO = args.video
+if not os.path.exists(VIDEO):
+    print(f"Error: The video file '{VIDEO}' does not exist.")
+    exit()
 
 model = YOLO("../models/yolov8_football.pt")
 reid  = PlayerReidentifier(device="cpu")
 
-src_points = np.array([[636, 215], [1310, 271], [365, 284], [589, 307]], dtype=np.float32)
-dst_points = np.array([
-    [0,    13.8 ],
-    [16.5, 13.8 ],
-    [0,    24.84],
-    [10.5, 24.84],
-], dtype=np.float32)
+# ── Load Homography Points ────────────────────────────────
+try:
+    with open("points.json", "r") as f:
+        points_data = json.load(f)
+    src_points = np.array(points_data["src_points"], dtype=np.float32)
+    dst_points = np.array(points_data["dst_points"], dtype=np.float32)
+except FileNotFoundError:
+    print("Error: 'points.json' not found. Please run 'get_points.py' first.")
+    exit()
+
 H, _ = cv2.findHomography(src_points, dst_points, cv2.RANSAC, 5.0)
 
 # ── Helpers ───────────────────────────────────────────────
@@ -80,7 +93,11 @@ def generate_heatmap(title, positions, output_path, cmap="hot"):
 # ── First pass ────────────────────────────────────────
 
 print("First pass — collecting data...")
-tracker = sv.ByteTrack()
+tracker = sv.ByteTrack(
+    lost_track_buffer=21,
+    track_activation_thresold=0.3659,
+    minimum_matching_thresold=0.8609
+)
 history           = defaultdict(list)
 player_colors     = defaultdict(list)
 
@@ -108,7 +125,7 @@ while cap.isOpened():
 
         # ── Re-identification ──────────────────────────
         if tid not in known_ids and crop is not None:
-            real_id = reid.search_in_gallery(crop, threshold=0.75)
+            real_id = reid.search_in_gallery(crop, threshold=0.5854)
             if real_id is not None:
                 # It's a player we already knew with another ID
                 remapped_ids[tid] = real_id
@@ -206,7 +223,11 @@ TEAM_COLOR = {
     -1: (128, 128, 128),
 }
 
-tracker2 = sv.ByteTrack()
+tracker2 = sv.ByteTrack(
+    lost_track_buffer=21,
+    track_activation_thresold=0.3659,
+    minimum_matching_thresold=0.8609
+)
 cap2     = cv2.VideoCapture(VIDEO)
 width = int(cap2.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap2.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -221,7 +242,7 @@ while cap2.isOpened():
     if not ret:
         break
 
-    results    = model(frame, conf=0.3)[0]
+    results    = model(frame, conf=0.5113)[0]
     detections = sv.Detections.from_ultralytics(results)
     detections = detections[np.isin(detections.class_id, [1, 2])]
     detections = tracker2.update_with_detections(detections)
